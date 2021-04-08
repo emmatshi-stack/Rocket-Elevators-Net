@@ -1,0 +1,222 @@
+﻿@{
+    ViewBag.Title = "Contact";
+}
+<h2>@ViewBag.Title.</h2>
+<h3>@ViewBag.Message</h3>
+
+<address>
+    One Microsoft Way<br />
+    Redmond, WA 98052-6399<br />
+    <abbr title="Phone">P:</abbr>
+    425.555.0100
+</address>
+
+<address>
+    <strong>Support:</strong>   <a href="mailto:Support@example.com">Support@example.com</a><br />
+    <strong>Marketing:</strong> <a href="mailto:Marketing@example.com">Marketing@example.com</a>
+</address>
+
+<div>
+
+
+
+    <select class="form-control" id="StudentGender" name="StudentGender">
+        <option>Select Customer</option>
+        <option>Male</option>
+        <option>Female</option>
+       
+    </select>
+    <select class="form-control" id="showbuilding" name="StudentGender">
+        <option>Select Building</option>
+        <option>Male</option>
+        <option>Female</option>
+    </select>
+    <select class="form-control" id="showbattery" name="StudentGender">
+        <option>Select Battery</option>
+        <option>Male</option>
+        <option>Female</option>
+    </select>
+    <br>
+    <select class="form-control" id="showcolumn" name="StudentGender">
+        <option>Select Column</option>
+        <option>Male</option>
+        <option>Female</option>
+    </select>
+    <select class="form-control" id="showelevator" name="StudentGender">
+        <option>Select Elevator</option>
+        <option>Male</option>
+        <option>Female</option>
+    </select>
+</div>
+
+
+<script>
+  // loading pages actions
+  window.addEventListener('load', function () {
+    document.getElementById("showbuilding").style.display = "none"
+    document.getElementById("showbattery").style.display = "none"
+    document.getElementById("showcolumn").style.display = "none"
+    document.getElementById("showelevator").style.display = "none"
+
+    // at the call of the function showbuilding we display the dropdown associated to id
+    window.showbuilding = function(){
+      document.getElementById("showbuilding").style.display = "block"
+      document.getElementById("showbattery").style.display = "none"
+      displaySubmitBtn()
+
+      var c = document.getElementById("intervention_customer_id");
+      var customerId = c.options[c.selectedIndex].value;
+
+      if(!customerId) {
+          document.getElementById("showbuilding").style.display = "none"
+          document.getElementById("showbattery").style.display = "none"
+          document.getElementById("showcolumn").style.display = "none"
+          document.getElementById("showelevator").style.display = "none"
+          return;
+      }
+
+      var param ={"custormerid":customerId}
+      // ajax to post and get information from the form to the controller
+      $.ajax({
+        type: "POST",
+        url: "/interventions/getbuildings",
+        data: param,
+        success: function(xht){
+          var selector = document.getElementById("intervention_building_id")
+          $(selector).html('<option value="-1">Select building</option>')
+          $(selector).append($.map(xht, function(item){
+            return $('<option/>', {id: item.id,value: item.id, text: item.id+" - "+item.adm_contact_full_name});
+          }));
+        }
+      });
+
+
+    }
+    // at the call of the function showbattery we display the dropdown associated to id
+    window.showbattery = function(){
+      document.getElementById("showbattery").style.display = "block"
+      displaySubmitBtn()
+
+      var b = document.getElementById("intervention_building_id");
+      var buildingId = b.options[b.selectedIndex].id;
+
+        if(!buildingId) {
+          document.getElementById("showbattery").style.display = "none"
+          document.getElementById("showcolumn").style.display = "none"
+          document.getElementById("showelevator").style.display = "none"
+          return;
+      }
+      // ajax to post and get information from the form to the controller
+      var param ={"buildingid":buildingId}
+      displaySubmitBtn()
+      $.ajax({
+        type: "POST",
+        url: "/interventions/getbatteries",
+        data: param,
+        success: function(bat){
+          var take = document.getElementById("intervention_battery_id")
+          $(take).html('<option value="-1">Select battery</option>')
+          $(take).append($.map(bat, function(item){
+            return $('<option/>', {id: item.id,value: item.id, text: item.id+" - "+item.status});
+          }));
+        }
+      });
+
+
+    }
+    // at the call of the function showcolumn we display the dropdown associated to id
+    window.showcolumn = function(){
+      document.getElementById("showcolumn").style.display = "block"
+
+      var col = document.getElementById("intervention_battery_id");
+      var batteryId = col.options[col.selectedIndex].id;
+      displaySubmitBtn()
+
+      if(!batteryId) {
+          document.getElementById("showcolumn").style.display = "none"
+          document.getElementById("showelevator").style.display = "none"
+          return;
+      }
+      // ajax to post and get information from the form to the controller
+      var param ={"batteryid":batteryId}
+      $.ajax({
+        type: "POST",
+        url: "/interventions/getcolumns",
+        data: param,
+        success: function(colu){
+          var takecol = document.getElementById("intervention_column_id")
+          $(takecol).html('<option value="-1">Select column</option>')
+          $(takecol).append($.map(colu, function(item){
+            return $('<option/>', {id: item.id, value: item.id, text: item.id+" - "+item.status});
+          }));
+        }
+      });
+
+
+    }
+    // at the call of the function showelevator we display the dropdown associated to id
+    window.showelevator = function(){
+      document.getElementById("showelevator").style.display = "block"
+
+      var el = document.getElementById("intervention_column_id");
+      var columnId = el.options[el.selectedIndex].id;
+
+      if(!columnId) {
+          document.getElementById("showelevator").style.display = "none"
+          return;
+      }
+
+      var param ={"columnid":columnId}
+      $.ajax({
+        type: "POST",
+        url: "/interventions/getelevators",
+        data: param,
+        success: function(eleva){
+          var takeelev = document.getElementById("intervention_elevator_id")
+          $(takeelev).html('<option value="-1">Select elevator</option>')
+          $(takeelev).append($.map(eleva, function(item){
+            return $('<option/>', {id: item.id,value: item.id, text: item.id+" - "+item.status});
+          }));
+
+
+        }
+      });
+
+    }
+    // function that enables ou disables the the submit button by checking if all necessary fields are okay
+    window.displaySubmitBtn = function() {
+      var b = document.getElementById("intervention_building_id");
+      var buildingId = b.options[b.selectedIndex].id;
+
+      var c = document.getElementById("intervention_customer_id");
+      var customerId = c.options[c.selectedIndex].value;
+
+      var c = document.getElementById("intervention_battery_id");
+      var batteryId = c.options[c.selectedIndex].value;
+
+
+      var submitBtn = document.getElementsByClassName("submit_intervention");
+      if(buildingId && buildingId != -1
+        && customerId && customerId != -1
+        && batteryId && batteryId != -1) {
+        submitBtn[0].removeAttribute("disabled")
+      } else {
+        submitBtn[0].setAttribute("disabled","")
+      }
+
+
+
+    }
+
+    window.displaySubmitBtn()
+
+
+
+
+
+  })
+
+
+</script>
+
+       
