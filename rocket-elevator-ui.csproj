@@ -249,6 +249,7 @@
     <Compile Include="Models\Elevators.cs" />
     <Compile Include="Models\Employees.cs" />
     <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\InterventionModel.cs" />
     <Compile Include="Models\Interventions.cs" />
     <Compile Include="Models\Leads.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
@@ -316,6 +317,9 @@
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Products\Building.cshtml" />
     <Content Include="Views\Home\GetInterventions.cshtml" />
+    <Content Include="Views\Home\_PartialSelectBatteries.cshtml" />
+    <Content Include="Views\Home\_PartialSelectColumn.cshtml" />
+    <Content Include="Views\Home\_PartialSelectElevators.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

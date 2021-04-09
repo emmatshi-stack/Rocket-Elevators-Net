@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
@@ -144,35 +146,75 @@ namespace rocket_elevator_ui.Controllers
 
         //
         // POST: /Account/Register
+        ////[HttpPost]
+        ////[AllowAnonymous]
+        ////[ValidateAntiForgeryToken]
+
+        ////public async Task<ActionResult> Register(RegisterViewModel model)
+        ////    // call the api
+        ////    // response.status code is ok
+        ////    // dans le 
+        ////{
+        ////    if (ModelState.IsValid  )
+        ////    {
+        ////        var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+        ////        bool existeDansAPI = false;
+
+
+
+        ////        var result = await UserManager.CreateAsync(user, model.Password);
+        ////        if (result.Succeeded)
+        ////        {
+        ////            await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
+
+        ////            // Pour plus d'informations sur l'activation de la confirmation de compte et de la réinitialisation de mot de passe, visitez https://go.microsoft.com/fwlink/?LinkID=320771
+        ////            // Envoyer un message électronique avec ce lien
+        ////            // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+        ////            // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+        ////            // await UserManager.SendEmailAsync(user.Id, "Confirmez votre compte", "Confirmez votre compte en cliquant <a href=\"" + callbackUrl + "\">ici</a>");
+
+        ////            return RedirectToAction("Index", "Home");
+        ////        }
+        ////        AddErrors(result);
+        ////    }
+
+        ////    // Si nous sommes arrivés là, un échec s’est produit. Réafficher le formulaire
+        ////    return View(model);
+        ////}
+
+
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-
         public async Task<ActionResult> Register(RegisterViewModel model)
-            // call the api
-            // response.status code is ok
-            // dans le 
         {
-            if (ModelState.IsValid  )
+            var httpClient = new HttpClient();
+            var response = await httpClient.GetAsync(requestUri: $"https://lionelrocket.herokuapp.com/customers/%7Bmodel.Email%7D%22");
+            if (ModelState.IsValid && response.StatusCode == HttpStatusCode.OK && response.Content.Headers.ContentLength > 2)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
-                var result = await UserManager.CreateAsync(user, model.Password);
+                var user = new ApplicationUser
+                {
+                    UserName = model.Email,
+                    Email = model.Email
+                };
+                var result = await UserManager.CreateAsync(user,
+                    model.Password);
                 if (result.Succeeded)
                 {
-                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
-                    // Pour plus d'informations sur l'activation de la confirmation de compte et de la réinitialisation de mot de passe, visitez https://go.microsoft.com/fwlink/?LinkID=320771
-                    // Envoyer un message électronique avec ce lien
+                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+
+                    // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
+                    // Send an email with this link
                     // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
                     // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    // await UserManager.SendEmailAsync(user.Id, "Confirmez votre compte", "Confirmez votre compte en cliquant <a href=\"" + callbackUrl + "\">ici</a>");
+                    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href="" + callbackUrl + "">here</a>");
 
                     return RedirectToAction("Index", "Home");
                 }
                 AddErrors(result);
             }
 
-            // Si nous sommes arrivés là, un échec s’est produit. Réafficher le formulaire
+            // If we got this far, something failed, redisplay form
             return View(model);
         }
 

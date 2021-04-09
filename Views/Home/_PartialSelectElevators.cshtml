@@ -1,0 +1,10 @@
+﻿@model rocket_elevator_ui.Models.InterventionModel
+
+
+<div class="form-group">
+    @Html.LabelFor(model => model.ElevatorId, "Elevators", htmlAttributes: new { @class = "control-label col-md-2" })
+    <div class="col-md-10">
+        @Html.DropDownListFor(model => model.ElevatorId, Model.Elevators, "-- Select Elevator --", htmlAttributes: new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.ElevatorId, "", new { @class = "text-danger" })
+    </div>
+</div>
