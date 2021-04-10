@@ -1,15 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using buildingapi.Model;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using Newtonsoft.Json;
 using rocket_elevator_ui.Models;
 
 namespace rocket_elevator_ui.Controllers
@@ -19,6 +23,7 @@ namespace rocket_elevator_ui.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        private string url = "https://localhost:5001";
 
         public AccountController()
         {
@@ -61,6 +66,44 @@ namespace rocket_elevator_ui.Controllers
         {
             ViewBag.ReturnUrl = returnUrl;
             return View();
+        }
+
+        // GET: /Account/Login
+        [AllowAnonymous]
+        public async Task<ActionResult> CustomerSettings()
+        {
+            var email = User.Identity.GetUserName();
+            var path1 = $"{url}/Customers/{email}";
+            var customer = await GetCustomerAsync(path1);
+
+            return View("CustomerSettings", customer);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> UpdateCustomer(Customers model)
+        {
+
+            //Interventions interv = new Interventions
+            //{
+            //    Reports = model.Reports,
+            //    Author = model.Author,
+            //    CustomerId = model.CustomerId,
+            //    BuildingId = long.Parse(model.BuildingId),
+            //    BatteryId = long.Parse(model.BatteryId),
+            //    ColumnId = long.Parse(model.ColumnId),
+            //    ElevatorId = long.Parse(model.ElevatorId)
+            //};
+            var httpClient = new HttpClient();
+            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+
+            var response = await httpClient.PostAsync($"{url}/Customers/update",
+                                                       new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json"));
+            if (response.IsSuccessStatusCode)
+            {
+                return View("SuccessMessage");
+            }
+            return View("CustomerSettings", model);
+
         }
 
         //
@@ -182,6 +225,22 @@ namespace rocket_elevator_ui.Controllers
         ////    return View(model);
         ////}
 
+        private async Task<Customers> GetCustomerAsync(string path)
+        {
+            Customers customer = null;
+
+            var httpClient = new HttpClient();
+            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+            var response = await httpClient.GetAsync(requestUri: path);
+            Console.WriteLine(response.StatusCode);
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadAsStringAsync();
+                var customers = JsonConvert.DeserializeObject<List<Customers>>(result);
+                customer = customers.FirstOrDefault();
+            }
+            return customer;
+        }
 
         [HttpPost]
         [AllowAnonymous]
@@ -189,8 +248,8 @@ namespace rocket_elevator_ui.Controllers
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
             var httpClient = new HttpClient();
-            string url = "https://lionelrocket.herokuapp.com/customers/" + model.Email;
-            var response = await httpClient.GetAsync(requestUri: $"https://lionelrocket.herokuapp.com/customers/{model.Email}");
+            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+            var response = await httpClient.GetAsync(requestUri: $"{url}/customers/{model.Email}");
             if (ModelState.IsValid && response.StatusCode == HttpStatusCode.OK && response.Content.Headers.ContentLength > 2)
             {
                 var user = new ApplicationUser

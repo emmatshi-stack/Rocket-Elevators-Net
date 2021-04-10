@@ -17,6 +17,7 @@ namespace rocket_elevator_ui.Controllers
     public class HomeController : Controller
     {
         private static readonly HttpClient client = new HttpClient();
+        private string url = "https://localhost:5001";
         public ActionResult Index()
         {
             return View();
@@ -50,7 +51,7 @@ namespace rocket_elevator_ui.Controllers
             if (response.IsSuccessStatusCode)
             {
                 var result = await response.Content.ReadAsStringAsync();
-                 buildings = JsonConvert.DeserializeObject<List<Buildings>>(result);
+                buildings = JsonConvert.DeserializeObject<List<Buildings>>(result);
             }
             return buildings;
         }
@@ -60,14 +61,14 @@ namespace rocket_elevator_ui.Controllers
         {
             InterventionModel model = new InterventionModel();
             var email = User.Identity.GetUserName();
-            var path1 = $"https://localhost:5001/Customers/{email}";
-            var customer=await  GetCustomerAsync(path1);
-            if(customer!= null)
+            var path1 = $"{url}/Customers/{email}";
+            var customer = await GetCustomerAsync(path1);
+            if (customer != null)
             {
-                var buildings =  await GetBuildingsAsync($"https://localhost:5001/Buildings/{customer.Id}/net");
-                if(buildings != null)
+                var buildings = await GetBuildingsAsync($"{url}/Buildings/{customer.Id}/net");
+                if (buildings != null)
                 {
-                    foreach(var element in buildings)
+                    foreach (var element in buildings)
                     {
                         model.Buildings.Add(new SelectListItem { Text = element.AdmContactFullName, Value = element.Id.ToString() });
                     }
@@ -92,9 +93,9 @@ namespace rocket_elevator_ui.Controllers
             var httpClient = new HttpClient();
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
 
-            var response = await httpClient.PostAsync($"https://localhost:5001/Interventions",
+            var response = await httpClient.PostAsync($"{url}/Interventions",
                                                        new StringContent(JsonConvert.SerializeObject(interv), Encoding.UTF8, "application/json"));
-            if(response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
                 return View("Index");
             }
@@ -109,9 +110,9 @@ namespace rocket_elevator_ui.Controllers
             List<SelectListItem> items = new List<SelectListItem>();
 
 
-          var httpClient = new HttpClient();
+            var httpClient = new HttpClient();
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-            var response = await httpClient.GetAsync(requestUri: $"https://localhost:5001/Batteries/{lBuildingId}");
+            var response = await httpClient.GetAsync(requestUri: $"{url}/Batteries/{lBuildingId}");
             if (response.IsSuccessStatusCode)
             {
                 var result = await response.Content.ReadAsStringAsync();
@@ -138,7 +139,7 @@ namespace rocket_elevator_ui.Controllers
 
             var httpClient = new HttpClient();
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-            var response = await httpClient.GetAsync(requestUri: $"https://localhost:5001/Batteries/{lbatteryId}");
+            var response = await httpClient.GetAsync(requestUri: $"{url}/Batteries/{lbatteryId}");
             if (response.IsSuccessStatusCode)
             {
                 var result = await response.Content.ReadAsStringAsync();
@@ -166,7 +167,7 @@ namespace rocket_elevator_ui.Controllers
 
             var httpClient = new HttpClient();
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-            var response = await httpClient.GetAsync(requestUri: $"https://localhost:5001/Elevators/{lcolumnId}/net");
+            var response = await httpClient.GetAsync(requestUri: $"{url}/Elevators/{lcolumnId}/net");
             if (response.IsSuccessStatusCode)
             {
                 var result = await response.Content.ReadAsStringAsync();
@@ -186,10 +187,42 @@ namespace rocket_elevator_ui.Controllers
         public ActionResult About()
         {
             ViewBag.Message = "Your application description page.";
-
+            //patate = loaddata()
+            //return View("about", patate);
             return View();
         }
 
+        public async Task<ActionResult> GetAddress(string email)
+        {
+            var httpClient = new HttpClient();
+            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+
+            //A appeller avec la function GetAddress(string email)
+            //var email = User.Identity.GetUserName();
+            //var path1 = $"{url}/Customers/{email}";
+            //var customer = await GetCustomerAsync(path1);
+            //GetAddress(customer.AddressId)
+
+
+
+            var response = await httpClient.GetAsync(requestUri: $"{url}/Address/net/{email}/n");
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadAsStringAsync();
+                var addres = JsonConvert.DeserializeObject<List<Addresses>>(result);
+            }
+            var model = new ProductModel();
+            //if (addres?.Count > 0)
+            //{
+            //    foreach (var element in addres)
+            //    {
+            //        model.Addresses.Add(new SelectListItem { Text = element.Id.ToString(), Value = element.Id.ToString() });
+            //    }
+            //}
+            return View("ProductModel", model);
+
+
+        }
         public ActionResult Contact()
         {
             ViewBag.Message = "Your contact page.";

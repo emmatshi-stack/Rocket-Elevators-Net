@@ -22,3 +22,16 @@ select,
 textarea {
     max-width: 280px;
 }
+
+
+.product-container {
+    margin-top: 67px !important;
+}
+
+.header-product{
+    margin:0px auto;
+}
+
+.user-setting {
+    margin-top: 67px !important;
+}

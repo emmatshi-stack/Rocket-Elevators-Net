@@ -227,6 +227,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -253,6 +254,7 @@
     <Compile Include="Models\Interventions.cs" />
     <Compile Include="Models\Leads.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\ProductModel.cs" />
     <Compile Include="Models\Quotes.cs" />
     <Compile Include="Models\Users.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -270,6 +272,7 @@
     <Content Include="Content\Site.css" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Models\ViewPage1.cshtml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />
@@ -320,6 +323,10 @@
     <Content Include="Views\Home\_PartialSelectBatteries.cshtml" />
     <Content Include="Views\Home\_PartialSelectColumn.cshtml" />
     <Content Include="Views\Home\_PartialSelectElevators.cshtml" />
+    <Content Include="Views\Home\ProductModel.cshtml" />
+    <Content Include="Views\Product\Index.cshtml" />
+    <Content Include="Views\Account\CustomerSettings.cshtml" />
+    <Content Include="Views\Account\SuccessMessage.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
