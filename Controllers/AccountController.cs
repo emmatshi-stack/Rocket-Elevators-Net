@@ -189,7 +189,8 @@ namespace rocket_elevator_ui.Controllers
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
             var httpClient = new HttpClient();
-            var response = await httpClient.GetAsync(requestUri: $"https://lionelrocket.herokuapp.com/customers/%7Bmodel.Email%7D%22");
+            string url = "https://lionelrocket.herokuapp.com/customers/" + model.Email;
+            var response = await httpClient.GetAsync(requestUri: $"https://lionelrocket.herokuapp.com/customers/{model.Email}");
             if (ModelState.IsValid && response.StatusCode == HttpStatusCode.OK && response.Content.Headers.ContentLength > 2)
             {
                 var user = new ApplicationUser
