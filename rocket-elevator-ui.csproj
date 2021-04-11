@@ -329,6 +329,7 @@
     <Content Include="Views\Product\Index.cshtml" />
     <Content Include="Views\Account\CustomerSettings.cshtml" />
     <Content Include="Views\Account\SuccessMessage.cshtml" />
+    <Content Include="Views\Home\SuccessMessage.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

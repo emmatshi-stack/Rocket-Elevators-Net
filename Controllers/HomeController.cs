@@ -60,20 +60,30 @@ namespace rocket_elevator_ui.Controllers
         public async Task<ActionResult> GetInterventions()
         {
             InterventionModel model = new InterventionModel();
-            var email = User.Identity.GetUserName();
-            var path1 = $"{url}/Customers/{email}";
-            var customer = await GetCustomerAsync(path1);
-            if (customer != null)
+            try
             {
-                var buildings = await GetBuildingsAsync($"{url}/Buildings/{customer.Id}/net");
-                if (buildings != null)
+                
+                var email = User.Identity.GetUserName();
+                var path1 = $"{url}/Customers/{email}";
+                var customer = await GetCustomerAsync(path1);
+                if (customer != null)
                 {
-                    foreach (var element in buildings)
+                    var buildings = await GetBuildingsAsync($"{url}/Buildings/{customer.Id}/net");
+                    if (buildings != null)
                     {
-                        model.Buildings.Add(new SelectListItem { Text = element.AdmContactFullName, Value = element.Id.ToString() });
+                        foreach (var element in buildings)
+                        {
+                            model.Buildings.Add(new SelectListItem { Text = element.AdmContactFullName, Value = element.Id.ToString() });
+                        }
                     }
                 }
             }
+            catch(Exception e)
+            {
+                int i = 0;
+            }
+
+            
             return View("GetInterventions", model);
         }
         [HttpPost]
@@ -90,15 +100,24 @@ namespace rocket_elevator_ui.Controllers
                 ColumnId = long.Parse(model.ColumnId),
                 ElevatorId = long.Parse(model.ElevatorId)
             };
-            var httpClient = new HttpClient();
-            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
 
-            var response = await httpClient.PostAsync($"{url}/Interventions",
-                                                       new StringContent(JsonConvert.SerializeObject(interv), Encoding.UTF8, "application/json"));
-            if (response.IsSuccessStatusCode)
+            try
             {
-                return View("Error"); 
+                var httpClient = new HttpClient();
+                ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+
+                var response = await httpClient.PostAsync($"{url}/Interventions",
+                                                           new StringContent(JsonConvert.SerializeObject(interv), Encoding.UTF8, "application/json"));
+                if (response.IsSuccessStatusCode)
+                {
+                    return View("SuccessMessage");
+                }
             }
+            catch(Exception e)
+            {
+                int i = 0;
+            }
+            
             return View("Index");
 
         }
