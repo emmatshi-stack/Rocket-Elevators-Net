@@ -15,7 +15,7 @@ namespace rocket_elevator_ui.Controllers
 {
     public class ProductController : Controller
     {
-        string url = "https://localhost:5001";
+        string url = "https://rocketapiem.herokuapp.com";
         // GET: Product
         public async Task<ActionResult> Index()
         {
