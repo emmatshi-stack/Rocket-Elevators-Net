@@ -23,7 +23,7 @@ namespace rocket_elevator_ui.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
-        private string url = "https://localhost:5001";
+        private string url = "https://rocketapiem.herokuapp.com";
 
         public AccountController()
         {

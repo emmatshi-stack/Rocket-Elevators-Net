@@ -17,7 +17,7 @@ namespace rocket_elevator_ui.Controllers
     public class HomeController : Controller
     {
         private static readonly HttpClient client = new HttpClient();
-        private string url = "https://localhost:5001";
+        private string url = "https://rocketapiem.herokuapp.com";
         public ActionResult Index()
         {
             return View();
@@ -97,9 +97,9 @@ namespace rocket_elevator_ui.Controllers
                                                        new StringContent(JsonConvert.SerializeObject(interv), Encoding.UTF8, "application/json"));
             if (response.IsSuccessStatusCode)
             {
-                return View("Index");
+                return View("Error"); 
             }
-            return View("Error");
+            return View("Index");
 
         }
         [HttpGet()]
@@ -139,7 +139,7 @@ namespace rocket_elevator_ui.Controllers
 
             var httpClient = new HttpClient();
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-            var response = await httpClient.GetAsync(requestUri: $"{url}/Batteries/{lbatteryId}");
+            var response = await httpClient.GetAsync(requestUri: $"{url}/Columns/{lbatteryId}");
             if (response.IsSuccessStatusCode)
             {
                 var result = await response.Content.ReadAsStringAsync();
